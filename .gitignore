@@ -1,0 +1,9 @@
+backups
+__pycache__
+.vscode
+node_modules
+dist
+.DS_Store
+.vercel
+.env*
+LINEAMIENTOS.md

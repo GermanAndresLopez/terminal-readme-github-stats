@@ -1,0 +1,16 @@
+{
+  "theme": "tokyonight",
+  "headerStyle": "windows",
+  "hostname": "github.com",
+  "typingSpeed": 100,
+  "sourceType": "repo",
+  "target": "GermanAndresLopez/terminal-readme-github-stats",
+  "commands": [
+    "neofetch",
+    "languages",
+    "git-log"
+  ],
+  "customCommands": {
+    "cat note.txt": "Thank you for visiting this repository"
+  }
+}

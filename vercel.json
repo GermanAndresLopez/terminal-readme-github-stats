@@ -1,0 +1,7 @@
+{
+  "cleanUrls": true,
+  "outputDirectory": ".",
+  "git": {
+    "deploymentEnabled": false
+  }
+}
