@@ -2,35 +2,52 @@
   <img src="./public/logo.png" alt="GitStat logo" width="96">
 </p>
 
-<h1 align='center'>📺 Github Stats Terminal </h1>
-<p align='center'><strong>Transform your GitHub Profile or Repository Readme into a dynamic, premium animated terminal simulator.</strong></p>
+<h1 align='center'>📺 Github Stats Terminal</h1>
+<p align='center'><strong>Transform your GitHub Profile or Repository README into a dynamic, premium animated terminal simulator.</strong></p>
 
 <p align="center">
   <img src="https://img.shields.io/github/license/GermanAndresLopez/terminal-readme-github-stats" alt="License">
   <img src="https://img.shields.io/github/stars/GermanAndresLopez/terminal-readme-github-stats" alt="Stars">
+  <img src="https://img.shields.io/github/issues/GermanAndresLopez/terminal-readme-github-stats" alt="Open issues">
+  <img src="https://img.shields.io/badge/Built%20with-TypeScript-3178c6?logo=typescript&logoColor=white" alt="Built with TypeScript">
 </p>
 
 <p align='center'>
   <img align="center" src="./github_stats.svg" alt="Github Stats Terminal Preview" width="800">
 </p>
 
-This engine compiles high-fidelity **interactive SVGs** featuring a professional terminal interface layout. It simulates a **real-time character-by-character typing execution** using pure CSS keyframes, bringing your profile repository to life with dynamic telemetry stats and modern aesthetic themes.
+This engine compiles high-fidelity **interactive SVGs** featuring a professional terminal interface layout, simulating **real-time character-by-character typing** using pure CSS keyframes — bringing your profile or repository to life with dynamic telemetry stats and modern aesthetic themes.
 
-This project runs two ways: **locally via CLI** (writes a static SVG you commit yourself) or **as your own Vercel serverless API** (generates the SVG on demand). There is no GitHub Actions integration — keeping the project's surface area small and easy to self-host.
+It runs two ways: **locally via CLI** (writes a static SVG you commit yourself) or **as your own Vercel serverless API** (generates the SVG on demand, always current). There is no GitHub Actions integration — that keeps the project's surface area small and easy to self-host.
+
+### Contents
+
+- [🎮 Visual Configurator Playground](#-visual-configurator-playground)
+- [💻 Local Setup & Usage](#-local-setup--usage)
+- [☁️ Deploying Your Own Vercel Instance](#-deploying-your-own-vercel-instance)
+- [🐚 Configuration & Customized Commands](#-configuration--customized-commands)
+- [🎨 Visual Themes](#-visual-themes)
+- [🪟 Window Styles](#-window-styles)
+- [🖼️ Neofetch ASCII Art](#-neofetch-ascii-art)
+- [📚 More Examples](#-more-examples)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [🙏 Credits & Project History](#-credits--project-history)
 
 ---
 
 ## 🎮 Visual Configurator Playground
 
-Want to design your terminal card interactively? Run the project locally (see below) and open the **Visual Web Configurator** in your browser to custom-build your card.
+Want to design your terminal card interactively instead of hand-writing query strings? Run the project locally (see below) and open the **Visual Web Configurator** in your browser to custom-build your card.
 
-> - Clean light-by-default UI (with a one-click dark mode toggle) built around a modern developer-tool design system.
-> - **Multi-language:** switch between 9 languages (English, Español, Português, Français, Deutsch, Русский, हिन्दी, 中文, 日本語) from the header — persisted across visits.
-> - Subtle interaction sounds (synthesized via [cuelume](https://www.npmjs.com/package/cuelume), no audio files) with a mute toggle, plus Apple-HIG-inspired motion (spring-like easing, respects `prefers-reduced-motion`).
-> - **Interactive Command Reordering:** rearrange your execution sequence (Move ▲ / Move ▼).
-> - **Custom Command Builder:** Map your own custom statements (e.g. `cat bio.txt` ➔ `Full Stack Dev @ Google`) and view live SVG compilation.
-> - **Single-Click Exports:** Instantly copy your responsive `config.json` or pre-encoded Markdown code block.
-> - **Instant preview:** the live preview shows a pre-generated card immediately on load (no spinner) and only calls the API once you actually change a setting.
+- Clean light-by-default UI (with a one-click dark mode toggle) built around a modern developer-tool design system.
+- **Multi-language:** switch between 9 languages (English, Español, Português, Français, Deutsch, Русский, हिन्दी, 中文, 日本語) from the header — persisted across visits.
+- Subtle interaction sounds (synthesized via [cuelume](https://www.npmjs.com/package/cuelume), no audio files) with a mute toggle, plus Apple-HIG-inspired motion (spring-like easing, respects `prefers-reduced-motion`).
+- **Interactive command reordering:** rearrange your execution sequence (Move ▲ / Move ▼).
+- **Custom command builder:** map your own custom statements (e.g. `cat bio.txt` ➔ `Full Stack Dev @ Google`) and view live SVG compilation.
+- **Single-click exports:** instantly copy your responsive `config.json` or pre-encoded Markdown embed code.
+- **Instant preview:** the live preview shows a pre-generated card immediately on load (no loading spinner) and only calls the API once you actually change a setting.
+- **Star on GitHub button** in the header with a live star count fetched straight from the GitHub API.
 
 ---
 
@@ -52,7 +69,7 @@ npm install
 Build the TypeScript files:
 
 - **One-time compilation:** `npm run build` (compiles source into `/dist`)
-- **CLI Dev Watcher:** `npm run dev:cli` (automatically watches files and rebuilds via `nodemon`)
+- **CLI dev watcher:** `npm run dev:cli` (automatically watches files and rebuilds via `nodemon`)
 
 ### 3. Running the CLI
 
@@ -60,19 +77,41 @@ Build the TypeScript files:
 # Optional: set a GitHub Personal Access Token for a higher rate limit (5,000/hour instead of 60/hour)
 export GHT="your_classic_github_token_here"
 
-# Profile Mode: Compile overall user profile stats
+# Profile mode: compile overall user profile stats
 npx ts-node bin/github-stats-terminal.ts --user GermanAndresLopez
 
-# Repository Mode: Compile individual repository statistics
+# Repository mode: compile individual repository statistics
 npx ts-node bin/github-stats-terminal.ts --repo owner/repository-name
 
-# Bulk Config Mode: Process all configs in terminalConfigs/ into terminals/
+# Bulk config mode: process every config in terminalConfigs/ into terminals/
 npx ts-node bin/github-stats-terminal.ts --bulk
 ```
 
 `GHT` (or `GITHUB_TOKEN`) is optional — without it, requests to the GitHub API are just unauthenticated and rate-limited to 60/hour.
 
 Each run writes a static `.svg` file you commit to your own repository/README manually.
+
+#### Example: driving the CLI from a config file
+
+Instead of flags, drop a `.github-stats-config.json` in your project root (see the full field reference in [Configuration & Customized Commands](#-configuration--customized-commands)) and just run `npx ts-node bin/github-stats-terminal.ts`:
+
+```json
+{
+  "sourceType": "user",
+  "target": "GermanAndresLopez",
+  "theme": "dracula",
+  "headerStyle": "mac",
+  "hostname": "github.com",
+  "typingSpeed": 100,
+  "art": "photo",
+  "commands": ["whoami", "neofetch", "languages", "uptime", "exit"],
+  "customCommands": {
+    "cat profile.txt": "A Chemical Engineer building software 😊"
+  }
+}
+```
+
+For **bulk mode**, that same shape goes into individual files inside `terminalConfigs/` (e.g. `terminalConfigs/user_profile.json`, `terminalConfigs/repo_stats.json`) — each file becomes its own `terminals/<name>.svg`.
 
 ### 4. Running the Serverless API Locally
 
@@ -113,12 +152,12 @@ Vercel gives you a production domain (e.g. `https://your-project.vercel.app`). E
 >
 > - `username`: Your GitHub account name.
 > - `theme`: Theme styling (see the [Visual Themes](#-visual-themes) table below), or `custom` combined with `customTheme`.
-> - `headerStyle`: Window chrome style — `mac`, `windows`, `windows11`, `ubuntu`, `vscode`, or `retro` (borderless).
+> - `headerStyle`: Window chrome style (see the [Window Styles](#-window-styles) table below).
 > - `hostname`: Change the CLI prompt hostname (e.g. `hostname=dev.io`).
 > - `typingSpeed`: Typing latency in milliseconds per character (default: `80`).
 > - `sourceType` / `target`: Set `sourceType=repo&target=owner/repo` to render repository stats instead of a user profile.
 > - `customTheme`: URL-encoded JSON with your own colors, used when `theme=custom` (e.g. `{"background":"#0d1117","foreground":"#c9d1d9","accent":"#58a6ff","cursor":"#58a6ff"}`). Any field you omit falls back to the Dracula base palette.
-> - `art`: The ASCII-art logo shown next to `neofetch` — one of `github`, `linux`, `arch`, `debian`, `windows`, `apple`, `xbox`, `playstation`, `avatar` (your real profile picture as ASCII art), or `photo` (your real profile picture as an actual image badge).
+> - `art`: The ASCII-art logo shown next to `neofetch` (see the [Neofetch ASCII Art](#-neofetch-ascii-art) table below), or `avatar` / `photo` to use your real profile picture.
 
 For the full walkthrough (environment variables, custom commands via URL, etc.), see the [Vercel Deployment Guide](docs/vercel-deployment.md).
 
@@ -131,29 +170,29 @@ By default, unauthenticated requests to the GitHub API are rate-limited to 60 re
 Customize your layout prompts and command behaviors by configuring a `.github-stats-config.json` inside your repository root (used by the local CLI), or via the equivalent query parameters on the Vercel API:
 
 | Property         | Type       | Description                                                                          | Default                                                              |
-| :--------------- | :--------- | :----------------------------------------------------------------------------------- | :------------------------------------------------------------------- |
+| :--------------- | :--------- | :----------------------------------------------------------------------------------- | :--------------------------------------------------------------------|
 | `sourceType`     | `string`   | Data ingestion type: `"user"` (GitHub profile stats) or `"repo"` (repository stats). | `"user"`                                                             |
 | `target`         | `string`   | Target profile username or `owner/repo` path.                                        | _username_                                                           |
-| `theme`          | `string`   | Visual terminal theme (see table below), or `"custom"`.                              | `"dracula"`                                                          |
-| `headerStyle`    | `string`   | Window chrome style: `mac`, `windows`, `windows11`, `ubuntu`, `vscode`, or `retro`.  | `"mac"`                                                              |
+| `theme`          | `string`   | Visual terminal theme — see [Visual Themes](#-visual-themes), or `"custom"`.         | `"dracula"`                                                          |
+| `headerStyle`    | `string`   | Window chrome style — see [Window Styles](#-window-styles).                          | `"mac"`                                                              |
 | `hostname`       | `string`   | CLI prompt hostname (e.g. `user@hostname`).                                          | `"github.com"`                                                       |
 | `typingSpeed`    | `number`   | Time in milliseconds per simulated keystroke.                                        | `80`                                                                 |
-| `commands`       | `string[]` | Ordered list of commands to run (see supported command list below).                  | `["whoami", "neofetch", "languages", "top-repos", "uptime", "exit"]` |
+| `commands`       | `string[]` | Ordered list of commands to run — see [Supported Terminal Commands](#supported-terminal-commands) below. | `["whoami", "neofetch", "languages", "top-repos", "uptime", "exit"]` |
 | `customCommands` | `object`   | Key-value pairs mapping custom CLI strings to mock faked text outputs.               | `{}`                                                                 |
 | `customTheme`    | `object`   | Custom color overrides (`background`, `foreground`, `accent`, `cursor`) used when `theme` is `"custom"`. | _(none)_                                              |
-| `art`            | `string`   | ASCII-art logo for `neofetch` (see [Neofetch ASCII Art](#-neofetch-ascii-art) below), or `"avatar"`.       | `"github"`                                            |
+| `art`            | `string`   | ASCII-art logo for `neofetch` — see [Neofetch ASCII Art](#-neofetch-ascii-art), or `"avatar"` / `"photo"`. | `"github"`                                            |
 
 ### Supported Terminal Commands
 
 - **`whoami`**: Prints the full user profile name or repository workspace namespace.
-- **`neofetch`**: Displays a custom NeoFetch-style statistics layout alongside a retro GitHub ASCII logo.
+- **`neofetch`**: Displays a custom NeoFetch-style statistics layout alongside an ASCII-art logo (see [Neofetch ASCII Art](#-neofetch-ascii-art)).
 - **`languages`**: Renders a beautiful horizontal progress bar breaking down top used languages.
 - **`git-log`**: _(Repository mode only)_ Renders the 5 most recent commits with styled Git SHA hashes and commit messages.
 - **`top-repos`**: _(User profile mode only)_ Renders a structured ASCII table showing your top 5 starred repositories.
-- **`ps`**: Renders a active Linux process monitor mapping repositories as system processes.
+- **`ps`**: Renders an active Linux process monitor mapping repositories as system processes.
 - **`uptime`**: Calculates active account or repository lifespan in years and days since creation.
-- **`exit`**: Simulates graceful shell terminal session exit.
-- **Custom Commands**: Any custom string (e.g. `cat bio.txt`) that maps to a custom text response defined inside `customCommands`.
+- **`exit`**: Simulates a graceful shell terminal session exit.
+- **Custom commands**: Any custom string (e.g. `cat bio.txt`) that maps to a custom text response defined inside `customCommands`.
 
 ---
 
@@ -207,7 +246,7 @@ The `headerStyle` option controls the window chrome drawn around the terminal:
 
 ## 🖼️ Neofetch ASCII Art
 
-The `art` option controls the ASCII-art logo shown next to the `neofetch` command's output:
+The `art` option controls the logo shown next to the `neofetch` command's output:
 
 | Value | Description |
 | :--- | :--- |
@@ -228,6 +267,38 @@ The `art` option controls the ASCII-art logo shown next to the `neofetch` comman
 
 ---
 
+## 📚 More Examples
+
+A few ready-to-paste embeds showing different combinations of the options above. Swap in your own `your-project.vercel.app` domain and username.
+
+**A different theme + window style:**
+```markdown
+[![GitHub Stats Terminal](https://your-project.vercel.app/api/stats?username=GermanAndresLopez&theme=nord&headerStyle=vscode)](https://github.com/GermanAndresLopez)
+```
+
+**Repository stats instead of a user profile:**
+```markdown
+[![GitHub Stats Terminal](https://your-project.vercel.app/api/stats?sourceType=repo&target=GermanAndresLopez/terminal-readme-github-stats&theme=monokai)](https://github.com/GermanAndresLopez/terminal-readme-github-stats)
+```
+
+**Your real GitHub avatar as the `neofetch` logo:**
+```markdown
+[![GitHub Stats Terminal](https://your-project.vercel.app/api/stats?username=GermanAndresLopez&art=avatar&theme=catppuccin)](https://github.com/GermanAndresLopez)
+```
+
+**A fully custom color palette:**
+```markdown
+[![GitHub Stats Terminal](https://your-project.vercel.app/api/stats?username=GermanAndresLopez&theme=custom&customTheme=%7B%22background%22%3A%22%230d1117%22%2C%22foreground%22%3A%22%23c9d1d9%22%2C%22accent%22%3A%22%2358a6ff%22%2C%22cursor%22%3A%22%2358a6ff%22%7D)](https://github.com/GermanAndresLopez)
+```
+
+**Custom commands with faked output** (`commands` + URL-encoded `customCommands`):
+```
+/api/stats?username=your-username&commands=whoami,neofetch,cat bio,exit&customCommands={"cat bio":"Software Engineer @ Google"}
+```
+See the [Vercel Deployment Guide](docs/vercel-deployment.md) for the full walkthrough of this parameter pair.
+
+---
+
 ## 🤝 Contributing
 
 Contributions are welcome! If you want to submit a new theme, fix a layout bug, or add a new built-in command:
@@ -235,7 +306,9 @@ Contributions are welcome! If you want to submit a new theme, fix a layout bug, 
 1. Fork the project.
 2. Create a feature branch (`git checkout -b feature/CoolAccent`).
 3. Commit your modifications.
-4. Open a dynamic Pull Request!
+4. Open a Pull Request!
+
+Please also read the [Code of Conduct](CODE_OF_CONDUCT.md) before participating.
 
 ---
 
@@ -243,22 +316,12 @@ Contributions are welcome! If you want to submit a new theme, fix a layout bug, 
 
 This project is licensed under the [MIT License](LICENSE).
 
-## 🕘 Novedades de esta versión
+## 🙏 Credits & Project History
 
-Partiendo de la base original, este proyecto ha sido ampliamente rediseñado y ampliado. Los cambios más significativos hasta ahora:
+This project is based on **[github-stats-terminal-style](https://github.com/yogeshwaran01/github-stats-terminal-style)**, created by **Yogeshwaran R** and distributed under the MIT License. Starting from that base, it has been substantially redesigned and extended into an independent project with its own architecture, new features, and a significantly improved user experience — most notably:
 
-- **Configurador visual rediseñado por completo** (`index.html`): nueva arquitectura de layout (rail de iconos + panel de vista previa fija), sistema de diseño propio con tokens de color/tipografía/sombra, y tema claro/oscuro conmutable.
-- **Internacionalización real:** 9 idiomas (inglés, español, portugués, francés, alemán, ruso, hindi, chino, japonés) con banderas y persistencia de preferencia.
-- **Sonido de interfaz sintetizado** vía [cuelume](https://www.npmjs.com/package/cuelume) (sin archivos de audio), con control de silencio.
-- **Foto de perfil real de GitHub como opción principal** del `art` de `neofetch` (antes era el logo genérico de Octocat).
-- **Vista previa en vivo instantánea:** al cargar la página se muestra de inmediato una tarjeta pregenerada (sin loader); la API solo se llama cuando el usuario cambia algo.
-- **Separación de endpoints** `api/resolve` (consulta a GitHub, cacheada) y `api/render` (renderizado desde caché) para no gastar cuota de la API de GitHub en cada ajuste del configurador.
-- **Botón "Star on GitHub"** en la cabecera con conteo de estrellas en vivo.
+- A rendering pipeline split into `api/resolve` (fetches live GitHub data, cached client-side) and `api/render` (renders from that cache), so tweaking a theme or command in the configurator never spends extra GitHub API quota.
+- A completely rebuilt [Visual Configurator](#-visual-configurator-playground): new layout architecture, its own design-token system, light/dark theming, 9-language i18n, and synthesized interface sound.
+- Real GitHub profile photo support (`art=avatar` / `art=photo`) as a first-class `neofetch` option, not just the generic Octocat.
 
-## Créditos
-
-Este proyecto está basado en **[github-stats-terminal-style](https://github.com/yogeshwaran01/github-stats-terminal-style)**, creado por **Yogeshwaran R** y distribuido bajo la licencia MIT.
-
-A partir de esa base, el proyecto ha sido ampliamente rediseñado y ampliado con una nueva arquitectura, nuevas funcionalidades, mejoras de rendimiento, mayor capacidad de personalización y una experiencia de usuario significativamente superior.
-
-Ver [LINEAMIENTOS.md](LINEAMIENTOS.md) para más detalle sobre esta relación y la estrategia del proyecto.
+This project is **not maintained as a GitHub fork** — it's published as its own independent repository, per the terms of the MIT License, while keeping the original copyright notice intact in [`LICENSE`](LICENSE).
