@@ -23,6 +23,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         const configOverride = buildConfigOverride({
             theme: query.theme as string,
             headerStyle: query.headerStyle as string,
+            effect: query.effect as string,
             typingSpeed: query.typingSpeed as string,
             hostname: query.hostname as string,
             commands: query.commands as string,

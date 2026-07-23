@@ -9,7 +9,7 @@ import { Theme } from "../types/theme.types";
 import { loadConfig, loadConfigFromPath } from "../utils/file.utils";
 import { TerminalService } from "./TerminalService";
 import { RepoStatus, GithubUserStats, GithubRepoStats } from "../types/github.types";
-import { HeaderStyle, CustomThemeInput } from "../types/terminal.types";
+import { HeaderStyle, EffectName, CustomThemeInput } from "../types/terminal.types";
 import { fetchImageAsDataUri } from "../utils/ascii-art.utils";
 import { PHOTO_SLOT_WIDTH, PHOTO_SLOT_HEIGHT } from "../constants/ascii-art.constants";
 
@@ -85,6 +85,7 @@ export class TerminalGeneratorEngine {
         const hostname = config.hostname || "github.com";
         const typingSpeed = typeof config.typingSpeed === "number" ? config.typingSpeed : 100;
         const headerStyle: HeaderStyle = config.headerStyle || "mac";
+        const effect: EffectName = config.effect || "none";
 
         const defaultCommands = ["whoami", "neofetch", "uptime", "exit"];
         const commandsList = Array.isArray(config.commands) ? config.commands : defaultCommands;
@@ -205,6 +206,8 @@ export class TerminalGeneratorEngine {
                 headerStyle
             );
         }
+
+        finalSvg = TerminalGeneratorEngine.applyEffect(finalSvg, effect);
 
         return finalSvg;
     }
@@ -450,5 +453,211 @@ ${revealPercent}%{opacity:1}
             console.warn("[neofetch] Failed to embed avatar photo, leaving card unchanged:", error);
             return svg;
         }
+    }
+
+    /**
+     * Procedurally builds a "digital rain" overlay (à la The Matrix): several
+     * columns of falling monospace glyphs with a fading trail, each looping
+     * independently via a negative CSS animation-delay so they desync instantly
+     * instead of all dropping in lockstep.
+     */
+    private static buildMatrixRain(width: number, height: number): string {
+        const glyphs = ["0", "1", "&lt;", "&gt;", "{", "}", ";", ":", ".", ",", "|", "+", "-", "*", "A", "B", "C", "D", "E", "F", "H", "K", "M", "P", "X", "Z"];
+        const colWidth = 22;
+        const columnCount = Math.max(6, Math.floor(width / colWidth));
+        const glyphsPerColumn = 7;
+        const fontSize = 11;
+
+        let columns = "";
+        for (let i = 0; i < columnCount; i++) {
+            const x = i * colWidth + (i % 3) * 4;
+            const duration = (2.6 + (i % 5) * 0.7).toFixed(2);
+            const delay = -((i * 0.37) % 4).toFixed(2);
+
+            let tspans = "";
+            for (let g = 0; g < glyphsPerColumn; g++) {
+                const char = glyphs[(i * 3 + g * 5) % glyphs.length];
+                const opacity = (1 - g / glyphsPerColumn).toFixed(2);
+                tspans += `<tspan x="${x}" dy="${g === 0 ? 0 : fontSize}" opacity="${opacity}">${char}</tspan>`;
+            }
+
+            columns += `<text class="fxMatrixCol" font-family="ui-monospace,Menlo,monospace" font-size="${fontSize}" fill="#39ff14" style="animation-duration:${duration}s;animation-delay:${delay}s;">${tspans}</text>`;
+        }
+
+        return `
+<clipPath id="fxMatrixClip"><rect width="${width}" height="${height}" rx="5" ry="5" /></clipPath>
+<style>
+@keyframes fxMatrixFall { from { transform: translateY(-115%); } to { transform: translateY(115%); } }
+.fxMatrixCol { animation-name: fxMatrixFall; animation-timing-function: linear; animation-iteration-count: infinite; }
+</style>`.trim() + `<g clip-path="url(#fxMatrixClip)" opacity="0.8">${columns}</g>`;
+    }
+
+    /**
+     * Overlays a decorative "screen effect" on the fully rendered card — baked
+     * directly into the SVG via filters, tiled patterns, and CSS/SMIL motion,
+     * so it (and its animation) is preserved wherever the card is embedded,
+     * unlike a CSS-only preview filter that would only apply inside this app.
+     *
+     * @param svg The fully rendered (header- and avatar-decorated) SVG string.
+     * @param effect The requested screen effect.
+     */
+    private static applyEffect(svg: string, effect: EffectName): string {
+        if (!effect || effect === "none") {
+            return svg;
+        }
+
+        const widthMatch = svg.match(/<svg[^>]+width="(\d+(?:\.\d+)?)"/);
+        const heightMatch = svg.match(/<svg[^>]+height="(\d+(?:\.\d+)?)"/);
+        const width = widthMatch ? parseFloat(widthMatch[1]!) : 840;
+        const height = heightMatch ? parseFloat(heightMatch[1]!) : 500;
+
+        type EffectBuild = { defs: string; overlay: string; filterId?: string; wrapClass?: string };
+        const effects: Record<Exclude<EffectName, "none">, () => EffectBuild> = {
+            // Scrolling scanlines + vignette + an occasional brightness flicker.
+            crt: () => ({
+                filterId: "fxCrtGlow",
+                defs: `
+<filter id="fxCrtGlow" x="-20%" y="-20%" width="140%" height="140%">
+  <feGaussianBlur in="SourceGraphic" stdDeviation="0.55" result="blur" />
+  <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+</filter>
+<pattern id="fxScanlines" width="100%" height="3" patternUnits="userSpaceOnUse">
+  <animate attributeName="y" values="0;3" dur="0.25s" repeatCount="indefinite" />
+  <rect width="100%" height="1.2" fill="#000000" opacity="0.18" />
+</pattern>
+<radialGradient id="fxVignette" cx="50%" cy="50%" r="75%">
+  <stop offset="55%" stop-color="#000000" stop-opacity="0" />
+  <stop offset="100%" stop-color="#000000" stop-opacity="0.4" />
+</radialGradient>
+<style>
+@keyframes fxFlicker { 0%,91%,100% { opacity: 1; } 92% { opacity: 0.82; } 93% { opacity: 1; } 96% { opacity: 0.88; } 97% { opacity: 1; } }
+.fxFlickerLayer { animation: fxFlicker 4s infinite; }
+</style>`.trim(),
+                overlay: `
+<rect class="fxFlickerLayer" width="${width}" height="${height}" fill="url(#fxScanlines)" pointer-events="none" />
+<rect width="${width}" height="${height}" fill="url(#fxVignette)" pointer-events="none" />`.trim()
+            }),
+            // Same scrolling scanlines as CRT, without the vignette/flicker — a lighter touch.
+            scanlines: () => ({
+                defs: `
+<pattern id="fxScanlines" width="100%" height="3" patternUnits="userSpaceOnUse">
+  <animate attributeName="y" values="0;3" dur="0.3s" repeatCount="indefinite" />
+  <rect width="100%" height="1.2" fill="#000000" opacity="0.2" />
+</pattern>`.trim(),
+                overlay: `<rect width="${width}" height="${height}" fill="url(#fxScanlines)" pointer-events="none" />`
+            }),
+            // Breathing neon bloom — the blur radius pulses, and the halo's alpha is
+            // boosted so it reads as a bright glow instead of a barely-visible blur.
+            glow: () => ({
+                filterId: "fxGlow",
+                defs: `
+<filter id="fxGlow" x="-60%" y="-60%" width="220%" height="220%">
+  <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur">
+    <animate attributeName="stdDeviation" values="1.5;5.5;1.5" dur="2.6s" repeatCount="indefinite" />
+  </feGaussianBlur>
+  <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 3 0" result="brightBlur" />
+  <feMerge><feMergeNode in="brightBlur" /><feMergeNode in="brightBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
+</filter>`.trim(),
+                overlay: ""
+            }),
+            // Old-TV static: the turbulence seed jumps rapidly for a crackling look.
+            noise: () => ({
+                defs: `
+<filter id="fxNoise">
+  <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" result="noise" seed="2">
+    <animate attributeName="seed" values="1;9;4;7;2;8;1" dur="0.5s" repeatCount="indefinite" />
+  </feTurbulence>
+  <feColorMatrix in="noise" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.06 0" />
+</filter>`.trim(),
+                overlay: `<rect width="${width}" height="${height}" filter="url(#fxNoise)" pointer-events="none" />`
+            }),
+            // Fine pixel/shadow-mask grid plus a slow vertical "refresh" sweep highlight.
+            pixelated: () => ({
+                defs: `
+<pattern id="fxPixelGrid" width="4" height="4" patternUnits="userSpaceOnUse">
+  <rect width="1.6" height="1.6" fill="#000000" opacity="0.16" />
+</pattern>
+<linearGradient id="fxSweepGradient" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0%" stop-color="#ffffff" stop-opacity="0" />
+  <stop offset="50%" stop-color="#ffffff" stop-opacity="0.35" />
+  <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+</linearGradient>
+<style>
+@keyframes fxSweep { from { transform: translateY(-40%); } to { transform: translateY(140%); } }
+.fxSweepBar { animation: fxSweep 3.4s ease-in-out infinite; }
+</style>`.trim(),
+                overlay: `
+<rect width="${width}" height="${height}" fill="url(#fxPixelGrid)" pointer-events="none" />
+<rect class="fxSweepBar" width="${width}" height="${height * 0.22}" fill="url(#fxSweepGradient)" pointer-events="none" />`.trim()
+            }),
+            // Jump-cut RGB-split glitch bars + a whole-card jitter shake.
+            glitch: () => ({
+                wrapClass: "fxGlitchJitter",
+                defs: `
+<style>
+@keyframes fxJitterShake {
+  0%, 88%, 100% { transform: translate(0,0); }
+  89% { transform: translate(2px,0); } 90% { transform: translate(-3px,0); }
+  91% { transform: translate(2px,-1px); } 92% { transform: translate(0,0); }
+}
+.fxGlitchJitter { animation: fxJitterShake 3.4s steps(1,end) infinite; }
+@keyframes fxGlitchBar {
+  0%, 88%, 100% { transform: translate(0,0); opacity: 0; }
+  89% { transform: translate(-5px,0); opacity: 0.55; }
+  90% { transform: translate(4px,0); opacity: 0.5; }
+  91% { transform: translate(-2px,0); opacity: 0.4; }
+  92% { transform: translate(0,0); opacity: 0; }
+}
+.fxGlitchBar { animation: fxGlitchBar 3.4s steps(1,end) infinite; mix-blend-mode: screen; }
+.fxGlitchBar.fxB2 { animation-delay: 1.2s; }
+</style>`.trim(),
+                overlay: `
+<rect class="fxGlitchBar" width="${width}" height="${height}" fill="#ff0033" opacity="0" pointer-events="none" />
+<rect class="fxGlitchBar fxB2" width="${width}" height="${height}" fill="#00e5ff" opacity="0" pointer-events="none" />`.trim()
+            }),
+            // Falling green code rain, Matrix-style, clipped to the card's rounded corners.
+            matrix: () => ({
+                defs: "",
+                overlay: TerminalGeneratorEngine.buildMatrixRain(width, height)
+            }),
+            // Neon glow whose hue continuously cycles through the spectrum —
+            // echoes the rainbow-bordered "Star on GitHub" button in the configurator.
+            rainbow: () => ({
+                filterId: "fxRainbowGlow",
+                defs: `
+<filter id="fxRainbowGlow" x="-60%" y="-60%" width="220%" height="220%">
+  <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur" />
+  <feColorMatrix in="blur" type="hueRotate" values="0" result="hue">
+    <animate attributeName="values" values="0;360" dur="4s" repeatCount="indefinite" />
+  </feColorMatrix>
+  <feColorMatrix in="hue" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 3 0" result="brightHue" />
+  <feMerge><feMergeNode in="brightHue" /><feMergeNode in="brightHue" /><feMergeNode in="SourceGraphic" /></feMerge>
+</filter>`.trim(),
+                overlay: ""
+            })
+        };
+
+        const build = effects[effect as Exclude<EffectName, "none">];
+        if (!build) return svg;
+        const { defs, overlay, filterId, wrapClass } = build();
+
+        const headEnd = svg.indexOf(">") + 1;
+        const tailStart = svg.lastIndexOf("</svg>");
+        if (headEnd <= 0 || tailStart === -1) return svg;
+
+        const wrapAttrs = [
+            filterId ? `filter="url(#${filterId})"` : "",
+            wrapClass ? `class="${wrapClass}"` : ""
+        ].filter(Boolean).join(" ");
+        const openWrap = wrapAttrs ? `<g ${wrapAttrs}>` : "";
+        const closeWrap = wrapAttrs ? "</g>" : "";
+
+        return svg.slice(0, headEnd)
+            + (defs ? `<defs>${defs}</defs>` : "")
+            + openWrap
+            + svg.slice(headEnd, tailStart)
+            + closeWrap
+            + overlay
+            + svg.slice(tailStart);
     }
 }

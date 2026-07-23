@@ -1,5 +1,5 @@
 import { ThemeName } from "../constants/themes.constants";
-import { HeaderStyle, CustomThemeInput } from "../types/terminal.types";
+import { HeaderStyle, EffectName, CustomThemeInput } from "../types/terminal.types";
 
 /**
  * Raw, loosely-typed request parameters as they arrive from either a query
@@ -8,6 +8,7 @@ import { HeaderStyle, CustomThemeInput } from "../types/terminal.types";
 export interface RawConfigParams {
     theme?: string;
     headerStyle?: string;
+    effect?: string;
     typingSpeed?: string | number;
     hostname?: string;
     commands?: string | string[];
@@ -44,6 +45,7 @@ export function buildConfigOverride(params: RawConfigParams) {
     return {
         theme: (params.theme || "dracula") as ThemeName | "custom",
         headerStyle: (params.headerStyle || "mac") as HeaderStyle,
+        effect: (params.effect || "none") as EffectName,
         hostname: params.hostname || "github.com",
         typingSpeed: typeof params.typingSpeed === "number" ? params.typingSpeed : parseInt(String(params.typingSpeed || "100"), 10),
         sourceType: params.sourceType || "user",

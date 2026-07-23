@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="light dark">
+    <meta name="color-scheme" content="dark">
     <title>Github Stats Terminal</title>
     <link rel="icon" type="image/png" href="/public/logo.png">
     <link rel="shortcut icon" type="image/png" href="/public/logo.png">
@@ -15,10 +15,10 @@
         rel="stylesheet">
     <style>
         /* ============================= Design Tokens =============================
-           Premium developer-tool identity: soft depth (layered shadows, not hard
-           borders), rounded surfaces, dual typography — a clean humanist sans for
-           UI text, monospace reserved for actual code/data. Emerald brand accent
-           (ties to the GitStat mark) on a warm, near-white canvas by default. */
+           "Scouting card" identity: deep navy canvas with a gold brand accent,
+           inspired by sports-card UI (stat badges, crest borders, gold numerals).
+           Single fixed theme — no light/dark switching. Dual typography kept —
+           a clean humanist sans for UI text, monospace reserved for code/data. */
         :root {
             --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
@@ -46,25 +46,25 @@
             --rail-w: 84px;
             --preview-w: 704px;
 
-            /* Light (default) */
-            --bg: #F7F7F5;
-            --surface: #FFFFFF;
-            --surface-sunken: #F1F1EE;
-            --text: #16181D;
-            --text-muted: #6B7075;
-            --border: rgba(22, 24, 29, 0.09);
-            --border-strong: rgba(22, 24, 29, 0.14);
-            --brand: #0D9488;
-            --brand-hover: #0F766E;
-            --brand-soft: #E6F7F5;
-            --brand-fg-on: #FFFFFF;
-            --danger: #DC2626;
-            --danger-soft: #FEF0EF;
-            --focus-ring: rgba(13, 148, 136, 0.28);
-            --shadow-xs: 0 1px 2px rgba(16, 24, 32, 0.05);
-            --shadow-sm: 0 2px 8px rgba(16, 24, 32, 0.06);
-            --shadow-md: 0 8px 24px rgba(16, 24, 32, 0.08);
-            --shadow-lg: 0 24px 56px rgba(16, 24, 32, 0.14);
+            /* Navy + gold scouting-card theme */
+            --bg: #080B18;
+            --surface: #10152C;
+            --surface-sunken: #0B0F22;
+            --text: #F3F5FC;
+            --text-muted: #8891B8;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-strong: rgba(245, 197, 66, 0.22);
+            --brand: #F5C542;
+            --brand-hover: #FFDA6A;
+            --brand-soft: rgba(245, 197, 66, 0.14);
+            --brand-fg-on: #14172B;
+            --danger: #FF6B6B;
+            --danger-soft: rgba(255, 107, 107, 0.14);
+            --focus-ring: rgba(245, 197, 66, 0.35);
+            --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.35);
+            --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 10px 32px rgba(0, 0, 0, 0.45);
+            --shadow-lg: 0 28px 64px rgba(0, 0, 0, 0.6);
 
             /* Dynamic terminal fallback colors (overwritten by JS) */
             --term-bg: #282a36;
@@ -72,29 +72,6 @@
             --term-cursor: #f8f8f2;
             --term-ansi-2: #50fa7b;
             --term-ansi-4: #bd93f9;
-
-            color-scheme: light;
-        }
-
-        :root[data-theme="dark"] {
-            --bg: #0B0D11;
-            --surface: #14171C;
-            --surface-sunken: #0F1216;
-            --text: #F2F3F5;
-            --text-muted: #8B9198;
-            --border: rgba(255, 255, 255, 0.08);
-            --border-strong: rgba(255, 255, 255, 0.14);
-            --brand: #2DD4BF;
-            --brand-hover: #5EEAD4;
-            --brand-soft: rgba(45, 212, 191, 0.14);
-            --brand-fg-on: #0B0D11;
-            --danger: #F87171;
-            --danger-soft: rgba(248, 113, 113, 0.14);
-            --focus-ring: rgba(45, 212, 191, 0.35);
-            --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
-            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.35);
-            --shadow-md: 0 10px 32px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 28px 64px rgba(0, 0, 0, 0.55);
 
             color-scheme: dark;
         }
@@ -104,7 +81,11 @@
 
         body {
             font-family: var(--font-sans);
-            background: var(--bg);
+            background:
+                radial-gradient(ellipse 900px 500px at 15% -10%, rgba(245, 197, 66, 0.10), transparent 60%),
+                radial-gradient(ellipse 1100px 700px at 110% 10%, rgba(90, 110, 220, 0.16), transparent 55%),
+                var(--bg);
+            background-attachment: fixed;
             color: var(--text);
             min-height: 100vh;
             display: flex;
@@ -112,7 +93,6 @@
             overflow-x: hidden;
             font-size: 15px;
             line-height: 1.55;
-            transition: background-color var(--dur-slow) var(--ease-standard), color var(--dur-slow) var(--ease-standard);
         }
 
         ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -160,7 +140,41 @@
             flex-shrink: 0;
         }
 
-        .logo-text h1 { font-size: 1rem; font-weight: 700; letter-spacing: -0.015em; white-space: nowrap; }
+        .logo-text h1 { font-size: 1rem; font-weight: 800; letter-spacing: -0.01em; white-space: nowrap; color: var(--text); }
+
+        /* ============================= Intro splash ============================= */
+        .intro-splash {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                radial-gradient(ellipse 900px 500px at 50% 40%, rgba(245, 197, 66, 0.16), transparent 60%),
+                var(--bg);
+            transition: opacity 500ms var(--ease-standard), visibility 500ms;
+        }
+        .intro-splash.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .intro-splash-logo {
+            width: 96px;
+            height: 96px;
+            object-fit: contain;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg), 0 0 80px -8px rgba(245, 197, 66, 0.55);
+            opacity: 0;
+            transform: scale(0.55) rotate(-6deg);
+            animation: introLogoIn 900ms var(--ease-spring) 150ms forwards;
+        }
+        @keyframes introLogoIn {
+            0% { opacity: 0; transform: scale(0.55) rotate(-6deg); }
+            60% { opacity: 1; transform: scale(1.08) rotate(2deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .intro-splash { transition: opacity 200ms ease; }
+            .intro-splash-logo { animation: none; opacity: 1; transform: none; }
+        }
 
         .header-actions { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; }
 
@@ -175,7 +189,7 @@
             border-radius: var(--radius-full);
             border: 1.5px solid transparent;
             background:
-                linear-gradient(#16181d, #16181d) padding-box,
+                linear-gradient(var(--surface-sunken), var(--surface-sunken)) padding-box,
                 linear-gradient(90deg, hsl(0, 100%, 63%), hsl(90, 100%, 63%), hsl(210, 100%, 63%), hsl(195, 100%, 63%), hsl(270, 100%, 63%)) border-box;
             background-size: 100% 100%, 200% 100%;
             background-position: 0 0, 0 0;
@@ -260,10 +274,6 @@
         .icon-btn:active { transform: scale(0.92); transition-duration: var(--dur-fast); }
         .icon-btn svg { width: 17px; height: 17px; }
 
-        #theme-toggle .icon-moon,
-        :root[data-theme="dark"] #theme-toggle .icon-sun { display: none; }
-        :root[data-theme="dark"] #theme-toggle .icon-moon { display: block; }
-
         #sound-toggle .icon-muted,
         .sound-off #sound-toggle .icon-on { display: none; }
         .sound-off #sound-toggle .icon-muted { display: block; }
@@ -341,13 +351,16 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
         .section-title {
-            font-size: 1.05rem;
+            font-size: 0.78rem;
             font-weight: 700;
-            letter-spacing: -0.015em;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
             display: flex;
             align-items: center;
             gap: var(--space-2);
+            color: var(--text-muted);
         }
+        .section-title::before { content: "—"; color: var(--brand); font-weight: 700; }
         .section-title svg { width: 18px; height: 18px; color: var(--brand); flex-shrink: 0; }
 
         .form-group { display: flex; flex-direction: column; gap: var(--space-2); }
@@ -593,10 +606,13 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: var(--surface);
+            background:
+                linear-gradient(180deg, rgba(245, 197, 66, 0.05), transparent 40%),
+                var(--surface);
             padding: var(--space-6);
             border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-strong);
+            box-shadow: var(--shadow-md), 0 0 0 1px rgba(245, 197, 66, 0.05), 0 0 48px -12px rgba(245, 197, 66, 0.18);
             position: relative;
             min-height: 528px;
         }
@@ -666,6 +682,7 @@
         }
         .export-header span { display: flex; align-items: center; gap: var(--space-2); font-weight: 600; font-size: 0.88rem; }
         .export-header svg { width: 17px; height: 17px; color: var(--brand); }
+        .export-hint { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
 
         .code-container {
             background: var(--surface-sunken);
@@ -697,6 +714,7 @@
         }
         .copy-btn:hover { background: var(--brand); border-color: var(--brand); color: var(--brand-fg-on); box-shadow: var(--shadow-sm); }
         .copy-btn:active { transform: scale(0.95); }
+        .copy-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
         .download-btn { background: var(--brand); border-color: var(--brand); color: var(--brand-fg-on); box-shadow: var(--shadow-sm); }
         .download-btn:hover { background: var(--brand-hover); border-color: var(--brand-hover); box-shadow: var(--shadow-md); }
 
@@ -816,11 +834,10 @@
             }
             .preview-rail {
                 position: static;
-                height: auto;
+                min-height: 0;
                 border-left: none;
                 border-top: 1px solid var(--border);
             }
-            .svg-preview-element, .terminal { max-height: 70vh; }
         }
         @media (max-width: 640px) {
             .page-grid {
@@ -840,6 +857,9 @@
 </head>
 
 <body>
+    <div class="intro-splash" id="intro-splash" aria-hidden="true">
+        <img class="intro-splash-logo" src="/public/logo.png" alt="">
+    </div>
     <div class="page-grid">
         <header class="topbar">
             <div class="logo-group">
@@ -873,11 +893,6 @@
                 <button class="icon-btn" id="sound-toggle" type="button" aria-label="Toggle interaction sounds" data-cuelume-toggle="toggle">
                     <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
                     <svg class="icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
-                </button>
-
-                <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle light/dark theme" data-cuelume-toggle="toggle">
-                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="22"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="2" y1="12" x2="4" y2="12"></line><line x1="20" y1="12" x2="22" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                 </button>
             </div>
         </header>
@@ -998,6 +1013,21 @@
                     </select>
                 </div>
 
+                <div class="form-group">
+                    <label data-i18n="label.effect">Screen Effect</label>
+                    <select id="effect" data-cuelume-toggle="tick">
+                        <option value="none" selected>None</option>
+                        <option value="crt">CRT Monitor</option>
+                        <option value="scanlines">Scanlines</option>
+                        <option value="glow">Neon Glow (pulsing)</option>
+                        <option value="noise">VHS Noise</option>
+                        <option value="pixelated">Pixelated</option>
+                        <option value="glitch">Glitch</option>
+                        <option value="matrix">Matrix Rain</option>
+                        <option value="rainbow">Rainbow Neon</option>
+                    </select>
+                </div>
+
                 <div class="form-group" id="custom-theme-panel" style="display:none;">
                     <label data-i18n="label.customPalette">Custom Palette</label>
                     <div class="form-row">
@@ -1064,6 +1094,20 @@
                 <div class="section-title">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                     <span data-i18n="tab.export">Export</span>
+                </div>
+
+                <div class="export-block">
+                    <div class="export-header">
+                        <span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>
+                            <span data-i18n="section.svgDownload">Terminal SVG Card</span>
+                        </span>
+                        <button class="copy-btn download-btn" id="download-svg-btn" data-cuelume-press="success">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            <span data-i18n="btn.downloadSvg">Download SVG</span>
+                        </button>
+                    </div>
+                    <p class="export-hint" data-i18n="hint.svgDownload">A standalone .svg file rendered with your current profile and settings — embed it anywhere without hitting this API.</p>
                 </div>
 
                 <div class="export-block">
@@ -1150,19 +1194,21 @@
                 'badge.live': 'Live Preview', 'tab.profile': 'Profile', 'tab.appearance': 'Style', 'tab.commands': 'Commands', 'tab.export': 'Export',
                 'label.sourceType': 'Source Type', 'radio.userProfile': 'GitHub User Profile', 'radio.repository': 'GitHub Repository',
                 'label.username': 'GitHub Username', 'label.repository': 'GitHub Repository', 'label.hostname': 'Hostname Prompt',
-                'label.visualTheme': 'Visual Theme', 'label.windowStyle': 'Window Style', 'label.asciiArt': 'Neofetch ASCII Art',
+                'label.visualTheme': 'Visual Theme', 'label.windowStyle': 'Window Style', 'label.effect': 'Screen Effect', 'label.asciiArt': 'Neofetch ASCII Art',
                 'option.avatarAscii': 'My GitHub Avatar (ASCII)', 'option.avatarPhoto': 'My GitHub Avatar (Real Photo)',
                 'label.customPalette': 'Custom Palette', 'label.background': 'Background', 'label.foreground': 'Foreground', 'label.accent': 'Accent', 'label.cursor': 'Cursor',
                 'label.typingSpeed': 'Typing Speed Simulation', 'label.commandsPool': 'Available Commands Pool (Click to add)',
                 'label.activeSequence': 'Active Command Sequence (Reorder & Remove)', 'label.customCommands': 'Build Custom Commands',
                 'placeholder.customCmdKey': 'Command (e.g. cat bio)', 'placeholder.customCmdVal': 'Printed output string', 'btn.addCustomCmd': '+ Add Custom Command',
                 'section.configJson': 'config.json Configuration', 'section.markdownEmbed': 'README Markdown Embed URL', 'btn.copy': 'Copy', 'btn.delete': 'Delete',
+                'section.svgDownload': 'Terminal SVG Card', 'btn.downloadSvg': 'Download SVG', 'hint.svgDownload': 'A standalone .svg file rendered with your current profile and settings — embed it anywhere without hitting this API.',
                 'preview.badge': 'Live SVG Preview', 'empty.sequence': 'No commands in sequence. Click available pool or add custom commands to build!',
                 'empty.customCmds': 'No custom commands built yet.', 'title.moveUp': 'Move up', 'title.moveDown': 'Move down', 'title.remove': 'Remove',
                 'alert.customCmdMissing': 'Please enter both a custom command string and its output text.',
                 'alert.customCmdConflict': 'This command name conflicts with a built-in command.',
                 'toast.avatarRepoWarning': 'Avatar/photo is only available in user profile mode',
                 'toast.configExported': 'config.json exported successfully', 'toast.markdownCopied': 'Markdown copied to clipboard',
+                'toast.svgExported': 'SVG card downloaded successfully', 'toast.svgExportError': 'Could not download the SVG',
                 'toast.copyError': 'Error copying text', 'toast.jsonCopied': 'config.json copied to clipboard', 'toast.jsonCopyError': 'Error copying JSON',
                 'toast.rateLimited': 'GitHub API rate limit reached (60/hour without a token). Try again in a few minutes.',
                 'toast.previewError': 'Could not generate the preview',
@@ -1173,19 +1219,21 @@
                 'badge.live': 'Vista en vivo', 'tab.profile': 'Perfil', 'tab.appearance': 'Estilo', 'tab.commands': 'Comandos', 'tab.export': 'Exportar',
                 'label.sourceType': 'Tipo de Fuente', 'radio.userProfile': 'Perfil de Usuario', 'radio.repository': 'Repositorio',
                 'label.username': 'Usuario de GitHub', 'label.repository': 'Repositorio de GitHub', 'label.hostname': 'Hostname del Prompt',
-                'label.visualTheme': 'Tema Visual', 'label.windowStyle': 'Estilo de Ventana', 'label.asciiArt': 'ASCII Art de Neofetch',
+                'label.visualTheme': 'Tema Visual', 'label.windowStyle': 'Estilo de Ventana', 'label.effect': 'Efecto de Pantalla', 'label.asciiArt': 'ASCII Art de Neofetch',
                 'option.avatarAscii': 'Mi Avatar de GitHub (ASCII)', 'option.avatarPhoto': 'Mi Avatar de GitHub (Foto Real)',
                 'label.customPalette': 'Paleta Personalizada', 'label.background': 'Fondo', 'label.foreground': 'Texto', 'label.accent': 'Acento', 'label.cursor': 'Cursor',
                 'label.typingSpeed': 'Velocidad de Tipeo', 'label.commandsPool': 'Comandos Disponibles (click para agregar)',
                 'label.activeSequence': 'Secuencia Activa (reordenar y quitar)', 'label.customCommands': 'Crear Comandos Personalizados',
                 'placeholder.customCmdKey': 'Comando (ej. cat bio)', 'placeholder.customCmdVal': 'Texto de salida', 'btn.addCustomCmd': '+ Agregar Comando',
                 'section.configJson': 'Configuración config.json', 'section.markdownEmbed': 'URL de Embed para el README', 'btn.copy': 'Copiar', 'btn.delete': 'Eliminar',
+                'section.svgDownload': 'Tarjeta SVG del Terminal', 'btn.downloadSvg': 'Descargar SVG', 'hint.svgDownload': 'Un archivo .svg independiente generado con tu perfil y configuración actuales — insértalo donde quieras sin depender de esta API.',
                 'preview.badge': 'Vista Previa en Vivo', 'empty.sequence': 'No hay comandos en la secuencia. Hacé click en el pool disponible o agregá comandos personalizados.',
                 'empty.customCmds': 'Todavía no creaste comandos personalizados.', 'title.moveUp': 'Subir', 'title.moveDown': 'Bajar', 'title.remove': 'Quitar',
                 'alert.customCmdMissing': 'Completá el comando y su texto de salida.',
                 'alert.customCmdConflict': 'Ese nombre de comando ya existe como comando incorporado.',
                 'toast.avatarRepoWarning': 'El avatar/foto solo está disponible en modo perfil de usuario',
                 'toast.configExported': 'config.json exportado con éxito', 'toast.markdownCopied': 'Markdown copiado al portapapeles',
+                'toast.svgExported': 'Tarjeta SVG descargada con éxito', 'toast.svgExportError': 'No se pudo descargar el SVG',
                 'toast.copyError': 'Error al copiar el texto', 'toast.jsonCopied': 'config.json copiado al portapapeles', 'toast.jsonCopyError': 'Error al copiar el JSON',
                 'toast.rateLimited': 'Se agotó el límite de la API de GitHub (60/hora sin token). Probá de nuevo en unos minutos.',
                 'toast.previewError': 'No se pudo generar el preview',
@@ -1196,19 +1244,21 @@
                 'badge.live': 'Prévia ao vivo', 'tab.profile': 'Perfil', 'tab.appearance': 'Estilo', 'tab.commands': 'Comandos', 'tab.export': 'Exportar',
                 'label.sourceType': 'Tipo de Fonte', 'radio.userProfile': 'Perfil de Usuário', 'radio.repository': 'Repositório',
                 'label.username': 'Usuário do GitHub', 'label.repository': 'Repositório do GitHub', 'label.hostname': 'Hostname do Prompt',
-                'label.visualTheme': 'Tema Visual', 'label.windowStyle': 'Estilo de Janela', 'label.asciiArt': 'ASCII Art do Neofetch',
+                'label.visualTheme': 'Tema Visual', 'label.windowStyle': 'Estilo de Janela', 'label.effect': 'Efeito de Tela', 'label.asciiArt': 'ASCII Art do Neofetch',
                 'option.avatarAscii': 'Meu Avatar do GitHub (ASCII)', 'option.avatarPhoto': 'Meu Avatar do GitHub (Foto Real)',
                 'label.customPalette': 'Paleta Personalizada', 'label.background': 'Fundo', 'label.foreground': 'Texto', 'label.accent': 'Destaque', 'label.cursor': 'Cursor',
                 'label.typingSpeed': 'Velocidade de Digitação', 'label.commandsPool': 'Comandos Disponíveis (clique para adicionar)',
                 'label.activeSequence': 'Sequência Ativa (reordenar e remover)', 'label.customCommands': 'Criar Comandos Personalizados',
                 'placeholder.customCmdKey': 'Comando (ex. cat bio)', 'placeholder.customCmdVal': 'Texto de saída', 'btn.addCustomCmd': '+ Adicionar Comando',
                 'section.configJson': 'Configuração config.json', 'section.markdownEmbed': 'URL de Embed para o README', 'btn.copy': 'Copiar', 'btn.delete': 'Excluir',
+                'section.svgDownload': 'Cartão SVG do Terminal', 'btn.downloadSvg': 'Baixar SVG', 'hint.svgDownload': 'Um arquivo .svg independente renderizado com seu perfil e configurações atuais — use-o em qualquer lugar sem depender desta API.',
                 'preview.badge': 'Prévia ao Vivo', 'empty.sequence': 'Nenhum comando na sequência. Clique no pool disponível ou adicione comandos personalizados.',
                 'empty.customCmds': 'Nenhum comando personalizado criado ainda.', 'title.moveUp': 'Subir', 'title.moveDown': 'Descer', 'title.remove': 'Remover',
                 'alert.customCmdMissing': 'Preencha o comando e o texto de saída.',
                 'alert.customCmdConflict': 'Esse nome de comando já existe como comando embutido.',
                 'toast.avatarRepoWarning': 'Avatar/foto só está disponível no modo perfil de usuário',
                 'toast.configExported': 'config.json exportado com sucesso', 'toast.markdownCopied': 'Markdown copiado para a área de transferência',
+                'toast.svgExported': 'Cartão SVG baixado com sucesso', 'toast.svgExportError': 'Não foi possível baixar o SVG',
                 'toast.copyError': 'Erro ao copiar o texto', 'toast.jsonCopied': 'config.json copiado para a área de transferência', 'toast.jsonCopyError': 'Erro ao copiar o JSON',
                 'toast.rateLimited': 'Limite da API do GitHub atingido (60/hora sem token). Tente novamente em alguns minutos.',
                 'toast.previewError': 'Não foi possível gerar a prévia',
@@ -1219,19 +1269,21 @@
                 'badge.live': 'Aperçu en direct', 'tab.profile': 'Profil', 'tab.appearance': 'Style', 'tab.commands': 'Commandes', 'tab.export': 'Exporter',
                 'label.sourceType': 'Type de Source', 'radio.userProfile': 'Profil GitHub', 'radio.repository': 'Dépôt GitHub',
                 'label.username': 'Nom d’utilisateur GitHub', 'label.repository': 'Dépôt GitHub', 'label.hostname': 'Hostname du Prompt',
-                'label.visualTheme': 'Thème Visuel', 'label.windowStyle': 'Style de Fenêtre', 'label.asciiArt': 'ASCII Art de Neofetch',
+                'label.visualTheme': 'Thème Visuel', 'label.windowStyle': 'Style de Fenêtre', 'label.effect': 'Effet d’écran', 'label.asciiArt': 'ASCII Art de Neofetch',
                 'option.avatarAscii': 'Mon Avatar GitHub (ASCII)', 'option.avatarPhoto': 'Mon Avatar GitHub (Photo Réelle)',
                 'label.customPalette': 'Palette Personnalisée', 'label.background': 'Arrière-plan', 'label.foreground': 'Texte', 'label.accent': 'Accent', 'label.cursor': 'Curseur',
                 'label.typingSpeed': 'Vitesse de Frappe', 'label.commandsPool': 'Commandes Disponibles (cliquez pour ajouter)',
                 'label.activeSequence': 'Séquence Active (réordonner et supprimer)', 'label.customCommands': 'Créer des Commandes Personnalisées',
                 'placeholder.customCmdKey': 'Commande (ex. cat bio)', 'placeholder.customCmdVal': 'Texte de sortie', 'btn.addCustomCmd': '+ Ajouter une Commande',
                 'section.configJson': 'Configuration config.json', 'section.markdownEmbed': 'URL d’intégration Markdown pour le README', 'btn.copy': 'Copier', 'btn.delete': 'Supprimer',
+                'section.svgDownload': 'Carte SVG du Terminal', 'btn.downloadSvg': 'Télécharger le SVG', 'hint.svgDownload': 'Un fichier .svg autonome généré avec votre profil et vos réglages actuels — intégrez-le où vous voulez sans dépendre de cette API.',
                 'preview.badge': 'Aperçu en Direct', 'empty.sequence': 'Aucune commande dans la séquence. Cliquez sur le pool disponible ou ajoutez des commandes personnalisées.',
                 'empty.customCmds': 'Aucune commande personnalisée créée pour l’instant.', 'title.moveUp': 'Monter', 'title.moveDown': 'Descendre', 'title.remove': 'Supprimer',
                 'alert.customCmdMissing': 'Veuillez saisir la commande et son texte de sortie.',
                 'alert.customCmdConflict': 'Ce nom de commande entre en conflit avec une commande intégrée.',
                 'toast.avatarRepoWarning': 'L’avatar/photo n’est disponible qu’en mode profil utilisateur',
                 'toast.configExported': 'config.json exporté avec succès', 'toast.markdownCopied': 'Markdown copié dans le presse-papiers',
+                'toast.svgExported': 'Carte SVG téléchargée avec succès', 'toast.svgExportError': 'Impossible de télécharger le SVG',
                 'toast.copyError': 'Erreur lors de la copie du texte', 'toast.jsonCopied': 'config.json copié dans le presse-papiers', 'toast.jsonCopyError': 'Erreur lors de la copie du JSON',
                 'toast.rateLimited': 'Limite de l’API GitHub atteinte (60/heure sans jeton). Réessayez dans quelques minutes.',
                 'toast.previewError': 'Impossible de générer l’aperçu',
@@ -1242,19 +1294,21 @@
                 'badge.live': 'Live-Vorschau', 'tab.profile': 'Profil', 'tab.appearance': 'Stil', 'tab.commands': 'Befehle', 'tab.export': 'Export',
                 'label.sourceType': 'Quelltyp', 'radio.userProfile': 'GitHub-Benutzerprofil', 'radio.repository': 'GitHub-Repository',
                 'label.username': 'GitHub-Benutzername', 'label.repository': 'GitHub-Repository', 'label.hostname': 'Hostname-Prompt',
-                'label.visualTheme': 'Visuelles Thema', 'label.windowStyle': 'Fensterstil', 'label.asciiArt': 'Neofetch ASCII-Art',
+                'label.visualTheme': 'Visuelles Thema', 'label.windowStyle': 'Fensterstil', 'label.effect': 'Bildschirmeffekt', 'label.asciiArt': 'Neofetch ASCII-Art',
                 'option.avatarAscii': 'Mein GitHub-Avatar (ASCII)', 'option.avatarPhoto': 'Mein GitHub-Avatar (echtes Foto)',
                 'label.customPalette': 'Eigene Palette', 'label.background': 'Hintergrund', 'label.foreground': 'Text', 'label.accent': 'Akzent', 'label.cursor': 'Cursor',
                 'label.typingSpeed': 'Tippgeschwindigkeit', 'label.commandsPool': 'Verfügbare Befehle (klicken zum Hinzufügen)',
                 'label.activeSequence': 'Aktive Sequenz (neu anordnen & entfernen)', 'label.customCommands': 'Eigene Befehle erstellen',
                 'placeholder.customCmdKey': 'Befehl (z. B. cat bio)', 'placeholder.customCmdVal': 'Ausgabetext', 'btn.addCustomCmd': '+ Befehl hinzufügen',
                 'section.configJson': 'config.json-Konfiguration', 'section.markdownEmbed': 'README Markdown-Embed-URL', 'btn.copy': 'Kopieren', 'btn.delete': 'Löschen',
+                'section.svgDownload': 'Terminal-SVG-Karte', 'btn.downloadSvg': 'SVG herunterladen', 'hint.svgDownload': 'Eine eigenständige .svg-Datei, gerendert mit deinem aktuellen Profil und deinen Einstellungen — binde sie überall ein, ganz ohne diese API.',
                 'preview.badge': 'Live-Vorschau', 'empty.sequence': 'Keine Befehle in der Sequenz. Klicke im Pool oder füge eigene Befehle hinzu.',
                 'empty.customCmds': 'Noch keine eigenen Befehle erstellt.', 'title.moveUp': 'Nach oben', 'title.moveDown': 'Nach unten', 'title.remove': 'Entfernen',
                 'alert.customCmdMissing': 'Bitte Befehl und Ausgabetext eingeben.',
                 'alert.customCmdConflict': 'Dieser Befehlsname kollidiert mit einem eingebauten Befehl.',
                 'toast.avatarRepoWarning': 'Avatar/Foto ist nur im Benutzerprofil-Modus verfügbar',
                 'toast.configExported': 'config.json erfolgreich exportiert', 'toast.markdownCopied': 'Markdown in die Zwischenablage kopiert',
+                'toast.svgExported': 'SVG-Karte erfolgreich heruntergeladen', 'toast.svgExportError': 'SVG konnte nicht heruntergeladen werden',
                 'toast.copyError': 'Fehler beim Kopieren des Textes', 'toast.jsonCopied': 'config.json in die Zwischenablage kopiert', 'toast.jsonCopyError': 'Fehler beim Kopieren des JSON',
                 'toast.rateLimited': 'GitHub-API-Limit erreicht (60/Stunde ohne Token). Versuche es in ein paar Minuten erneut.',
                 'toast.previewError': 'Vorschau konnte nicht erstellt werden',
@@ -1265,19 +1319,21 @@
                 'badge.live': 'Живой просмотр', 'tab.profile': 'Профиль', 'tab.appearance': 'Стиль', 'tab.commands': 'Команды', 'tab.export': 'Экспорт',
                 'label.sourceType': 'Тип источника', 'radio.userProfile': 'Профиль пользователя', 'radio.repository': 'Репозиторий',
                 'label.username': 'Имя пользователя GitHub', 'label.repository': 'Репозиторий GitHub', 'label.hostname': 'Hostname в приглашении',
-                'label.visualTheme': 'Визуальная тема', 'label.windowStyle': 'Стиль окна', 'label.asciiArt': 'ASCII-арт Neofetch',
+                'label.visualTheme': 'Визуальная тема', 'label.windowStyle': 'Стиль окна', 'label.effect': 'Эффект экрана', 'label.asciiArt': 'ASCII-арт Neofetch',
                 'option.avatarAscii': 'Мой аватар GitHub (ASCII)', 'option.avatarPhoto': 'Мой аватар GitHub (реальное фото)',
                 'label.customPalette': 'Своя палитра', 'label.background': 'Фон', 'label.foreground': 'Текст', 'label.accent': 'Акцент', 'label.cursor': 'Курсор',
                 'label.typingSpeed': 'Скорость печати', 'label.commandsPool': 'Доступные команды (нажмите, чтобы добавить)',
                 'label.activeSequence': 'Активная последовательность (изменить порядок и удалить)', 'label.customCommands': 'Создать свои команды',
                 'placeholder.customCmdKey': 'Команда (напр. cat bio)', 'placeholder.customCmdVal': 'Текст вывода', 'btn.addCustomCmd': '+ Добавить команду',
                 'section.configJson': 'Конфигурация config.json', 'section.markdownEmbed': 'Markdown-ссылка для README', 'btn.copy': 'Копировать', 'btn.delete': 'Удалить',
+                'section.svgDownload': 'SVG-карточка термина', 'btn.downloadSvg': 'Скачать SVG', 'hint.svgDownload': 'Отдельный файл .svg, отрендеренный с вашим текущим профилем и настройками — вставляйте его где угодно без обращения к этому API.',
                 'preview.badge': 'Живой просмотр', 'empty.sequence': 'Нет команд в последовательности. Нажмите на доступный пул или добавьте свои команды.',
                 'empty.customCmds': 'Пользовательские команды ещё не созданы.', 'title.moveUp': 'Вверх', 'title.moveDown': 'Вниз', 'title.remove': 'Удалить',
                 'alert.customCmdMissing': 'Введите команду и текст вывода.',
                 'alert.customCmdConflict': 'Это имя команды конфликтует со встроенной командой.',
                 'toast.avatarRepoWarning': 'Аватар/фото доступны только в режиме профиля пользователя',
                 'toast.configExported': 'config.json успешно экспортирован', 'toast.markdownCopied': 'Markdown скопирован в буфер обмена',
+                'toast.svgExported': 'SVG-карточка успешно скачана', 'toast.svgExportError': 'Не удалось скачать SVG',
                 'toast.copyError': 'Ошибка копирования текста', 'toast.jsonCopied': 'config.json скопирован в буфер обмена', 'toast.jsonCopyError': 'Ошибка копирования JSON',
                 'toast.rateLimited': 'Достигнут лимит GitHub API (60/час без токена). Повторите через несколько минут.',
                 'toast.previewError': 'Не удалось создать предпросмотр',
@@ -1288,19 +1344,21 @@
                 'badge.live': 'लाइव प्रीव्यू', 'tab.profile': 'प्रोफ़ाइल', 'tab.appearance': 'स्टाइल', 'tab.commands': 'कमांड्स', 'tab.export': 'एक्सपोर्ट',
                 'label.sourceType': 'सोर्स टाइप', 'radio.userProfile': 'GitHub यूज़र प्रोफ़ाइल', 'radio.repository': 'GitHub रिपॉज़िटरी',
                 'label.username': 'GitHub यूज़रनेम', 'label.repository': 'GitHub रिपॉज़िटरी', 'label.hostname': 'होस्टनेम प्रॉम्प्ट',
-                'label.visualTheme': 'विज़ुअल थीम', 'label.windowStyle': 'विंडो स्टाइल', 'label.asciiArt': 'Neofetch ASCII आर्ट',
+                'label.visualTheme': 'विज़ुअल थीम', 'label.windowStyle': 'विंडो स्टाइल', 'label.effect': 'स्क्रीन इफ़ेक्ट', 'label.asciiArt': 'Neofetch ASCII आर्ट',
                 'option.avatarAscii': 'मेरा GitHub अवतार (ASCII)', 'option.avatarPhoto': 'मेरा GitHub अवतार (असली फ़ोटो)',
                 'label.customPalette': 'कस्टम पैलेट', 'label.background': 'बैकग्राउंड', 'label.foreground': 'टेक्स्ट', 'label.accent': 'एक्सेंट', 'label.cursor': 'कर्सर',
                 'label.typingSpeed': 'टाइपिंग स्पीड', 'label.commandsPool': 'उपलब्ध कमांड्स (जोड़ने के लिए क्लिक करें)',
                 'label.activeSequence': 'सक्रिय सीक्वेंस (पुनःक्रम और हटाएं)', 'label.customCommands': 'कस्टम कमांड बनाएं',
                 'placeholder.customCmdKey': 'कमांड (जैसे cat bio)', 'placeholder.customCmdVal': 'आउटपुट टेक्स्ट', 'btn.addCustomCmd': '+ कमांड जोड़ें',
                 'section.configJson': 'config.json कॉन्फ़िगरेशन', 'section.markdownEmbed': 'README के लिए Markdown Embed URL', 'btn.copy': 'कॉपी करें', 'btn.delete': 'हटाएं',
+                'section.svgDownload': 'टर्मिनल SVG कार्ड', 'btn.downloadSvg': 'SVG डाउनलोड करें', 'hint.svgDownload': 'आपकी वर्तमान प्रोफ़ाइल और सेटिंग्स के साथ बनी एक स्वतंत्र .svg फ़ाइल — इसे इस API के बिना कहीं भी उपयोग करें।',
                 'preview.badge': 'लाइव प्रीव्यू', 'empty.sequence': 'सीक्वेंस में कोई कमांड नहीं है। उपलब्ध पूल पर क्लिक करें या कस्टम कमांड जोड़ें।',
                 'empty.customCmds': 'अभी तक कोई कस्टम कमांड नहीं बनाया गया।', 'title.moveUp': 'ऊपर ले जाएं', 'title.moveDown': 'नीचे ले जाएं', 'title.remove': 'हटाएं',
                 'alert.customCmdMissing': 'कृपया कमांड और उसका आउटपुट टेक्स्ट दोनों दर्ज करें।',
                 'alert.customCmdConflict': 'यह कमांड नाम पहले से मौजूद कमांड से टकराता है।',
                 'toast.avatarRepoWarning': 'अवतार/फ़ोटो केवल यूज़र प्रोफ़ाइल मोड में उपलब्ध है',
                 'toast.configExported': 'config.json सफलतापूर्वक एक्सपोर्ट हुआ', 'toast.markdownCopied': 'Markdown क्लिपबोर्ड में कॉपी हुआ',
+                'toast.svgExported': 'SVG कार्ड सफलतापूर्वक डाउनलोड हुआ', 'toast.svgExportError': 'SVG डाउनलोड नहीं हो सका',
                 'toast.copyError': 'टेक्स्ट कॉपी करने में त्रुटि', 'toast.jsonCopied': 'config.json क्लिपबोर्ड में कॉपी हुआ', 'toast.jsonCopyError': 'JSON कॉपी करने में त्रुटि',
                 'toast.rateLimited': 'GitHub API लिमिट खत्म हो गई (बिना टोकन 60/घंटा)। कुछ मिनट बाद फिर कोशिश करें।',
                 'toast.previewError': 'प्रीव्यू नहीं बन सका',
@@ -1311,19 +1369,21 @@
                 'badge.live': '实时预览', 'tab.profile': '个人资料', 'tab.appearance': '样式', 'tab.commands': '命令', 'tab.export': '导出',
                 'label.sourceType': '来源类型', 'radio.userProfile': 'GitHub 用户资料', 'radio.repository': 'GitHub 仓库',
                 'label.username': 'GitHub 用户名', 'label.repository': 'GitHub 仓库', 'label.hostname': '主机名提示符',
-                'label.visualTheme': '视觉主题', 'label.windowStyle': '窗口样式', 'label.asciiArt': 'Neofetch ASCII 图案',
+                'label.visualTheme': '视觉主题', 'label.windowStyle': '窗口样式', 'label.effect': '屏幕特效', 'label.asciiArt': 'Neofetch ASCII 图案',
                 'option.avatarAscii': '我的 GitHub 头像（ASCII）', 'option.avatarPhoto': '我的 GitHub 头像（真实照片）',
                 'label.customPalette': '自定义配色', 'label.background': '背景色', 'label.foreground': '文字色', 'label.accent': '强调色', 'label.cursor': '光标色',
                 'label.typingSpeed': '打字速度', 'label.commandsPool': '可用命令（点击添加）',
                 'label.activeSequence': '当前命令序列（可重新排序或删除）', 'label.customCommands': '创建自定义命令',
                 'placeholder.customCmdKey': '命令（例如 cat bio）', 'placeholder.customCmdVal': '输出文本', 'btn.addCustomCmd': '+ 添加命令',
                 'section.configJson': 'config.json 配置', 'section.markdownEmbed': 'README 的 Markdown 嵌入链接', 'btn.copy': '复制', 'btn.delete': '删除',
+                'section.svgDownload': '终端 SVG 卡片', 'btn.downloadSvg': '下载 SVG', 'hint.svgDownload': '一个使用你当前资料和设置渲染好的独立 .svg 文件——无需依赖此 API，可在任何地方嵌入使用。',
                 'preview.badge': '实时预览', 'empty.sequence': '序列中还没有命令。点击可用命令池或添加自定义命令。',
                 'empty.customCmds': '还没有创建自定义命令。', 'title.moveUp': '上移', 'title.moveDown': '下移', 'title.remove': '移除',
                 'alert.customCmdMissing': '请输入命令及其输出文本。',
                 'alert.customCmdConflict': '该命令名称与内置命令冲突。',
                 'toast.avatarRepoWarning': '头像/照片仅在用户资料模式下可用',
                 'toast.configExported': 'config.json 导出成功', 'toast.markdownCopied': 'Markdown 已复制到剪贴板',
+                'toast.svgExported': 'SVG 卡片下载成功', 'toast.svgExportError': '无法下载 SVG',
                 'toast.copyError': '复制文本时出错', 'toast.jsonCopied': 'config.json 已复制到剪贴板', 'toast.jsonCopyError': '复制 JSON 时出错',
                 'toast.rateLimited': 'GitHub API 请求限额已用完（无令牌每小时 60 次）。请几分钟后再试。',
                 'toast.previewError': '无法生成预览',
@@ -1334,19 +1394,21 @@
                 'badge.live': 'ライブプレビュー', 'tab.profile': 'プロフィール', 'tab.appearance': 'スタイル', 'tab.commands': 'コマンド', 'tab.export': 'エクスポート',
                 'label.sourceType': 'ソースタイプ', 'radio.userProfile': 'GitHub ユーザープロフィール', 'radio.repository': 'GitHub リポジトリ',
                 'label.username': 'GitHub ユーザー名', 'label.repository': 'GitHub リポジトリ', 'label.hostname': 'ホスト名プロンプト',
-                'label.visualTheme': 'ビジュアルテーマ', 'label.windowStyle': 'ウィンドウスタイル', 'label.asciiArt': 'Neofetch ASCIIアート',
+                'label.visualTheme': 'ビジュアルテーマ', 'label.windowStyle': 'ウィンドウスタイル', 'label.effect': 'スクリーンエフェクト', 'label.asciiArt': 'Neofetch ASCIIアート',
                 'option.avatarAscii': '自分のGitHubアバター（ASCII）', 'option.avatarPhoto': '自分のGitHubアバター（実写真）',
                 'label.customPalette': 'カスタムパレット', 'label.background': '背景', 'label.foreground': 'テキスト', 'label.accent': 'アクセント', 'label.cursor': 'カーソル',
                 'label.typingSpeed': 'タイピング速度', 'label.commandsPool': '利用可能なコマンド（クリックで追加）',
                 'label.activeSequence': 'アクティブなシーケンス（並べ替え・削除）', 'label.customCommands': 'カスタムコマンドを作成',
                 'placeholder.customCmdKey': 'コマンド（例: cat bio）', 'placeholder.customCmdVal': '出力テキスト', 'btn.addCustomCmd': '+ コマンドを追加',
                 'section.configJson': 'config.json 設定', 'section.markdownEmbed': 'README用 Markdown 埋め込みURL', 'btn.copy': 'コピー', 'btn.delete': '削除',
+                'section.svgDownload': 'ターミナルSVGカード', 'btn.downloadSvg': 'SVGをダウンロード', 'hint.svgDownload': '現在のプロフィールと設定でレンダリングされた単体の.svgファイル。このAPIを使わずどこにでも埋め込めます。',
                 'preview.badge': 'ライブプレビュー', 'empty.sequence': 'シーケンスにコマンドがありません。利用可能なプールをクリックするか、カスタムコマンドを追加してください。',
                 'empty.customCmds': 'まだカスタムコマンドは作成されていません。', 'title.moveUp': '上へ', 'title.moveDown': '下へ', 'title.remove': '削除',
                 'alert.customCmdMissing': 'コマンドと出力テキストの両方を入力してください。',
                 'alert.customCmdConflict': 'このコマンド名は組み込みコマンドと競合します。',
                 'toast.avatarRepoWarning': 'アバター/写真はユーザープロフィールモードでのみ使用できます',
                 'toast.configExported': 'config.json のエクスポートに成功しました', 'toast.markdownCopied': 'Markdownをクリップボードにコピーしました',
+                'toast.svgExported': 'SVGカードのダウンロードに成功しました', 'toast.svgExportError': 'SVGをダウンロードできませんでした',
                 'toast.copyError': 'テキストのコピー中にエラーが発生しました', 'toast.jsonCopied': 'config.jsonをクリップボードにコピーしました', 'toast.jsonCopyError': 'JSONのコピー中にエラーが発生しました',
                 'toast.rateLimited': 'GitHub APIのレート制限に達しました（トークンなしで60回/時間）。数分後にもう一度お試しください。',
                 'toast.previewError': 'プレビューを生成できませんでした',
@@ -1373,14 +1435,6 @@
                 renderCustomCommandsList();
             }
         }
-
-        // ============================= Theme (light default) =============================
-        const THEME_KEY = 'gst_ui_theme';
-        function applyTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
-            localStorage.setItem(THEME_KEY, theme);
-        }
-        applyTheme(localStorage.getItem(THEME_KEY) || 'light');
 
         // ============================= Sound (cuelume) =============================
         const SOUND_KEY = 'gst_sound_enabled';
@@ -1410,6 +1464,7 @@
             hostname: document.getElementById('hostname'),
             theme: document.getElementById('theme'),
             headerStyle: document.getElementById('headerStyle'),
+            effect: document.getElementById('effect'),
             art: document.getElementById('art'),
             typingSpeed: document.getElementById('typingSpeed'),
             speedVal: document.getElementById('speed-val'),
@@ -1425,6 +1480,7 @@
             markdownBlock: document.getElementById('markdown-code-block'),
             jsonBlock: document.getElementById('json-code-block'),
             downloadBtn: document.getElementById('download-config-btn'),
+            downloadSvgBtn: document.getElementById('download-svg-btn'),
             copyBtn: document.getElementById('copy-markdown-btn'),
             copyJsonBtn: document.getElementById('copy-json-btn'),
             toast: document.getElementById('success-toast'),
@@ -1436,7 +1492,6 @@
             previewImg: document.getElementById('real-svg-preview'),
             previewLoader: document.getElementById('preview-loader'),
             langSelect: document.getElementById('lang-select'),
-            themeToggle: document.getElementById('theme-toggle'),
             soundToggle: document.getElementById('sound-toggle')
         };
 
@@ -1447,6 +1502,7 @@
             hostname: 'github.com',
             theme: 'dracula',
             headerStyle: 'mac',
+            effect: 'none',
             art: 'photo',
             typingSpeed: 80,
             commands: ['whoami', 'neofetch', 'languages', 'uptime', 'exit'],
@@ -1454,18 +1510,25 @@
             customTheme: { background: '#282a36', foreground: '#f8f8f2', accent: '#bd93f9', cursor: '#f8f8f2' }
         };
 
+        function playIntroSplash() {
+            const splash = document.getElementById('intro-splash');
+            if (!splash) return;
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const holdMs = reducedMotion ? 150 : 1100;
+            setTimeout(() => {
+                splash.classList.add('is-hidden');
+                splash.addEventListener('transitionend', () => splash.remove(), { once: true });
+            }, holdMs);
+        }
+
         function init() {
             initTabs();
             loadStarCount();
+            playIntroSplash();
 
             elements.langSelect.value = SUPPORTED_LANGS.includes(currentLang) ? currentLang : 'en';
             applyLanguage(currentLang);
             elements.langSelect.addEventListener('change', (e) => applyLanguage(e.target.value));
-
-            elements.themeToggle.addEventListener('click', () => {
-                const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-                applyTheme(next);
-            });
 
             elements.soundToggle.addEventListener('click', () => {
                 soundEnabled = !soundEnabled;
@@ -1514,6 +1577,10 @@
                 config.headerStyle = e.target.value;
                 updateUI();
             });
+            elements.effect.addEventListener('change', (e) => {
+                config.effect = e.target.value;
+                updateUI();
+            });
             elements.art.addEventListener('change', (e) => {
                 config.art = e.target.value;
                 if ((config.art === 'avatar' || config.art === 'photo') && config.sourceType === 'repo') {
@@ -1543,6 +1610,7 @@
 
             elements.btnAddCustomCmd.addEventListener('click', addCustomCommand);
             elements.downloadBtn.addEventListener('click', downloadConfig);
+            elements.downloadSvgBtn.addEventListener('click', downloadSvgCard);
             elements.copyBtn.addEventListener('click', copyMarkdownToClipboard);
             elements.copyJsonBtn.addEventListener('click', copyJsonToClipboard);
 
@@ -1576,7 +1644,7 @@
 
         function buildConfigData() {
             const data = {
-                theme: config.theme, headerStyle: config.headerStyle, art: config.art, hostname: config.hostname,
+                theme: config.theme, headerStyle: config.headerStyle, effect: config.effect, art: config.art, hostname: config.hostname,
                 typingSpeed: config.typingSpeed, sourceType: config.sourceType, target: config.target,
                 commands: config.commands, customCommands: config.customCommands
             };
@@ -1587,7 +1655,7 @@
         function buildApiQueryParams() {
             const data = buildConfigData();
             const queryParams = new URLSearchParams({
-                username: data.target, theme: data.theme, headerStyle: data.headerStyle, art: data.art,
+                username: data.target, theme: data.theme, headerStyle: data.headerStyle, effect: data.effect, art: data.art,
                 typingSpeed: data.typingSpeed, hostname: data.hostname, commands: data.commands.join(',')
             });
             if (data.sourceType === 'repo') {
@@ -1782,7 +1850,7 @@
             const data = buildConfigData();
             const payload = {
                 stats: cachedProfile.stats, target: data.target, sourceType: data.sourceType, theme: data.theme,
-                headerStyle: data.headerStyle, art: data.art, hostname: data.hostname, typingSpeed: data.typingSpeed,
+                headerStyle: data.headerStyle, effect: data.effect, art: data.art, hostname: data.hostname, typingSpeed: data.typingSpeed,
                 commands: data.commands, customCommands: data.customCommands, customTheme: data.customTheme
             };
             const response = await fetch(`${window.location.origin}/api/render`, {
@@ -1873,6 +1941,30 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             showToast(t('toast.configExported'));
+        }
+
+        async function downloadSvgCard() {
+            elements.downloadSvgBtn.disabled = true;
+            try {
+                if (!isCacheValidFor(config.target, config.sourceType)) {
+                    await resolveProfile(config.target, config.sourceType);
+                }
+                const svgBlob = await renderFromCache();
+                const url = URL.createObjectURL(svgBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${config.target.replace(/[^a-z0-9_-]+/gi, '-')}-github-stats.svg`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast(t('toast.svgExported'));
+            } catch (err) {
+                const message = /rate limit/i.test(err.message) ? t('toast.rateLimited') : `${t('toast.svgExportError')}: ${err.message}`;
+                showToast(message);
+            } finally {
+                elements.downloadSvgBtn.disabled = false;
+            }
         }
 
         function copyMarkdownToClipboard() {

@@ -41,6 +41,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
             ...buildConfigOverride({
                 theme: body.theme,
                 headerStyle: body.headerStyle,
+                effect: body.effect,
                 typingSpeed: body.typingSpeed,
                 hostname: body.hostname,
                 commands: body.commands,

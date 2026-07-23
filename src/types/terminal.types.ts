@@ -9,6 +9,13 @@ export type HeaderStyle =
     | 'word' | 'powerpoint' | 'linkedin' | 'chrome' | 'slack';
 
 /**
+ * Decorative screen/monitor effects overlaid on the fully rendered card —
+ * baked directly into the SVG output (filters + tiled patterns) so they show
+ * up wherever the card is embedded, not just inside the Visual Configurator.
+ */
+export type EffectName = 'none' | 'crt' | 'scanlines' | 'glow' | 'noise' | 'pixelated' | 'glitch' | 'matrix' | 'rainbow';
+
+/**
  * User-provided color overrides for the "custom" theme. Any omitted field
  * falls back to the base palette it's merged onto (see THEMES.dracula).
  */
@@ -37,6 +44,8 @@ export interface TerminalConfig {
     height?: number;
     /** The style of the terminal window header/chrome. */
     headerStyle?: HeaderStyle;
+    /** Decorative screen effect overlaid on the rendered card (default: 'none'). */
+    effect?: EffectName;
     /** Custom list of commands to run. */
     commands?: string[];
 }
