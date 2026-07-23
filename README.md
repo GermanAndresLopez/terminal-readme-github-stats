@@ -29,6 +29,7 @@ It runs two ways: **locally via CLI** (writes a static SVG you commit yourself) 
 - [🎨 Visual Themes](#-visual-themes)
 - [🪟 Window Styles](#-window-styles)
 - [🖼️ Neofetch ASCII Art](#-neofetch-ascii-art)
+- [🎬 Screen Effects](#-screen-effects)
 - [📚 More Examples](#-more-examples)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
@@ -40,18 +41,33 @@ It runs two ways: **locally via CLI** (writes a static SVG you commit yourself) 
 
 Want to design your terminal card interactively instead of hand-writing query strings? Run the project locally (see below) and open the **Visual Web Configurator** in your browser to custom-build your card.
 
-- Clean light-by-default UI (with a one-click dark mode toggle) built around a modern developer-tool design system.
+- A navy-and-gold "scouting card" visual identity — a distinctive dark UI built around a modern developer-tool design system, with an animated logo intro on load.
 - **Multi-language:** switch between 9 languages (English, Español, Português, Français, Deutsch, Русский, हिन्दी, 中文, 日本語) from the header — persisted across visits.
 - Subtle interaction sounds (synthesized via [cuelume](https://www.npmjs.com/package/cuelume), no audio files) with a mute toggle, plus Apple-HIG-inspired motion (spring-like easing, respects `prefers-reduced-motion`).
 - **Interactive command reordering:** rearrange your execution sequence (Move ▲ / Move ▼).
 - **Custom command builder:** map your own custom statements (e.g. `cat bio.txt` ➔ `Full Stack Dev @ Google`) and view live SVG compilation.
-- **Single-click exports:** instantly copy your responsive `config.json` or pre-encoded Markdown embed code.
+- **Screen effects:** layer a CRT, glitch, Matrix rain, or rainbow-neon look onto your card (see [Screen Effects](#-screen-effects)).
+- **Single-click exports:** copy your `config.json` or pre-encoded Markdown embed code, or download the fully self-contained, standalone `.svg` card straight from the Export tab.
 - **Instant preview:** the live preview shows a pre-generated card immediately on load (no loading spinner) and only calls the API once you actually change a setting.
 - **Star on GitHub button** in the header with a live star count fetched straight from the GitHub API.
 
 ---
 
 ## 💻 Local Setup & Usage
+
+### ⚡ Quickstart (fastest path to the Visual Configurator)
+
+```bash
+git clone https://github.com/GermanAndresLopez/terminal-readme-github-stats.git
+cd terminal-readme-github-stats
+npm install
+npm i -g vercel   # only needed once, globally
+vercel dev
+```
+
+Then open **`http://localhost:3000`** — that's the Visual Configurator, live. Build your card, copy the embed, done. No GitHub token is required to try it out (add one later if you hit the 60/hour rate limit — see [Deploying Your Own Vercel Instance](#-deploying-your-own-vercel-instance)).
+
+The sections below cover the CLI (for writing a static SVG file yourself) and the full deployment flow, in more detail.
 
 ### 1. Prerequisites
 
@@ -153,6 +169,7 @@ Vercel gives you a production domain (e.g. `https://your-project.vercel.app`). E
 > - `username`: Your GitHub account name.
 > - `theme`: Theme styling (see the [Visual Themes](#-visual-themes) table below), or `custom` combined with `customTheme`.
 > - `headerStyle`: Window chrome style (see the [Window Styles](#-window-styles) table below).
+> - `effect`: Decorative screen effect — CRT, glitch, Matrix rain, and more (see the [Screen Effects](#-screen-effects) table below).
 > - `hostname`: Change the CLI prompt hostname (e.g. `hostname=dev.io`).
 > - `typingSpeed`: Typing latency in milliseconds per character (default: `80`).
 > - `sourceType` / `target`: Set `sourceType=repo&target=owner/repo` to render repository stats instead of a user profile.
@@ -175,6 +192,7 @@ Customize your layout prompts and command behaviors by configuring a `.github-st
 | `target`         | `string`   | Target profile username or `owner/repo` path.                                        | _username_                                                           |
 | `theme`          | `string`   | Visual terminal theme — see [Visual Themes](#-visual-themes), or `"custom"`.         | `"dracula"`                                                          |
 | `headerStyle`    | `string`   | Window chrome style — see [Window Styles](#-window-styles).                          | `"mac"`                                                              |
+| `effect`         | `string`   | Decorative screen effect baked into the SVG — see [Screen Effects](#-screen-effects). | `"none"`                                                             |
 | `hostname`       | `string`   | CLI prompt hostname (e.g. `user@hostname`).                                          | `"github.com"`                                                       |
 | `typingSpeed`    | `number`   | Time in milliseconds per simulated keystroke.                                        | `80`                                                                 |
 | `commands`       | `string[]` | Ordered list of commands to run — see [Supported Terminal Commands](#supported-terminal-commands) below. | `["whoami", "neofetch", "languages", "top-repos", "uptime", "exit"]` |
@@ -267,6 +285,39 @@ The `art` option controls the logo shown next to the `neofetch` command's output
 
 ---
 
+## 🎬 Screen Effects
+
+The `effect` option layers a decorative, **animated** effect directly into the generated SVG — it's baked into the file itself (via SVG filters/patterns + CSS keyframes), not a preview-only filter, so it survives being embedded anywhere, including on GitHub.
+
+| Value | Description |
+| :--- | :--- |
+| `none` | No effect (default). |
+| `crt` | Scrolling scanlines, a soft vignette, and an occasional brightness flicker — an old CRT monitor. |
+| `scanlines` | Just the scrolling scanlines, without the vignette/flicker — a lighter touch. |
+| `glow` | A breathing neon bloom — the glow radius pulses in and out. |
+| `noise` | Old-TV static: a crackling grain overlay that shifts rapidly. |
+| `pixelated` | A fine pixel/shadow-mask grid plus a slow vertical "refresh" sweep highlight. |
+| `glitch` | Jump-cut RGB-split glitch bars with a whole-card jitter shake. |
+| `matrix` | Falling green code rain, clipped to the card's rounded corners. |
+| `rainbow` | A neon glow whose hue continuously cycles through the spectrum. |
+
+<table>
+<tr>
+<td align="center" width="50%"><img src="docs/examples/effect-crt.svg" width="380" alt="CRT effect example"><br><sub><code>effect=crt</code></sub></td>
+<td align="center" width="50%"><img src="docs/examples/effect-matrix.svg" width="380" alt="Matrix rain effect example"><br><sub><code>effect=matrix</code></sub></td>
+</tr>
+<tr>
+<td align="center" width="50%"><img src="docs/examples/effect-glitch.svg" width="380" alt="Glitch effect example"><br><sub><code>effect=glitch</code></sub></td>
+<td align="center" width="50%"><img src="docs/examples/effect-rainbow.svg" width="380" alt="Rainbow neon effect example"><br><sub><code>effect=rainbow</code></sub></td>
+</tr>
+</table>
+
+```markdown
+[![GitHub Stats Terminal](https://your-project.vercel.app/api/stats?username=GermanAndresLopez&effect=matrix)](https://github.com/GermanAndresLopez)
+```
+
+---
+
 ## 📚 More Examples
 
 A few ready-to-paste embeds showing different combinations of the options above. Swap in your own `your-project.vercel.app` domain and username.
@@ -289,6 +340,11 @@ A few ready-to-paste embeds showing different combinations of the options above.
 **A fully custom color palette:**
 ```markdown
 [![GitHub Stats Terminal](https://your-project.vercel.app/api/stats?username=GermanAndresLopez&theme=custom&customTheme=%7B%22background%22%3A%22%230d1117%22%2C%22foreground%22%3A%22%23c9d1d9%22%2C%22accent%22%3A%22%2358a6ff%22%2C%22cursor%22%3A%22%2358a6ff%22%7D)](https://github.com/GermanAndresLopez)
+```
+
+**A theme combined with a screen effect** (see [Screen Effects](#-screen-effects)):
+```markdown
+[![GitHub Stats Terminal](https://your-project.vercel.app/api/stats?username=GermanAndresLopez&theme=hacker&effect=crt)](https://github.com/GermanAndresLopez)
 ```
 
 **Custom commands with faked output** (`commands` + URL-encoded `customCommands`):
@@ -321,7 +377,8 @@ This project is licensed under the [MIT License](LICENSE).
 This project is based on **[github-stats-terminal-style](https://github.com/yogeshwaran01/github-stats-terminal-style)**, created by **Yogeshwaran R** and distributed under the MIT License. Starting from that base, it has been substantially redesigned and extended into an independent project with its own architecture, new features, and a significantly improved user experience — most notably:
 
 - A rendering pipeline split into `api/resolve` (fetches live GitHub data, cached client-side) and `api/render` (renders from that cache), so tweaking a theme or command in the configurator never spends extra GitHub API quota.
-- A completely rebuilt [Visual Configurator](#-visual-configurator-playground): new layout architecture, its own design-token system, light/dark theming, 9-language i18n, and synthesized interface sound.
+- A completely rebuilt [Visual Configurator](#-visual-configurator-playground): a distinctive navy-and-gold visual identity, new layout architecture, its own design-token system, 9-language i18n, and synthesized interface sound.
 - Real GitHub profile photo support (`art=avatar` / `art=photo`) as a first-class `neofetch` option, not just the generic Octocat.
+- [Animated screen effects](#-screen-effects) (CRT, glitch, Matrix rain, and more) rendered directly into the SVG's own filters and CSS keyframes, so they play wherever the card is embedded — not just inside the configurator.
 
 This project is **not maintained as a GitHub fork** — it's published as its own independent repository, per the terms of the MIT License, while keeping the original copyright notice intact in [`LICENSE`](LICENSE).
